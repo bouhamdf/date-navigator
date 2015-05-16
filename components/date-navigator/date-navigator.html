@@ -47,9 +47,9 @@ Fired when date changed.
             </div>
 
             <div>
-                <paper-button id="showByDay" on-click="{{showByDay}}" noink>Jour</paper-button>
-                <paper-button id="showByWeek" on-click="{{showByWeek}}" noink>Semaine</paper-button>
-                <paper-button id="showByMonth" on-click="{{showByMonth}}" noink>Mois</paper-button>
+                <paper-button id="showByDay" on-click="{{showByDay}}" noink>{{dayTitle}}</paper-button>
+                <paper-button id="showByWeek" on-click="{{showByWeek}}" noink>{{weekTitle}}</paper-button>
+                <paper-button id="showByMonth" on-click="{{showByMonth}}" noink>{{monthTitle}}</paper-button>
             </div>
         </div>
 
@@ -67,9 +67,52 @@ Fired when date changed.
              * @type string
              * @default 'en-us'
              */
-            locale:"en-us",
+            locale: null,
 
             dateFormat:"d",
+
+            translation: {
+                'en': {
+                    day: 'Day',
+                    week: 'Week',
+                    month: 'Month'
+                },
+                'fr': {
+                    day: 'Jour',
+                    week: 'Semaine',
+                    month: 'Mois'
+                },
+                'es': {
+                    day: 'Día',
+                    week: 'Semana',
+                    month: 'Mes'
+                },
+                'it': {
+                    day: 'Giorno',
+                    week: 'Settimana',
+                    month: 'Mese'
+                },
+                'de': {
+                    day: 'Tag',
+                    week: 'Woche',
+                    month: 'Monat'
+                },
+                'ne': {
+                    day: 'Dag',
+                    week: 'Week',
+                    month: 'Maand'
+                },
+                'ru': {
+                    day: '????',
+                    week: '?????',
+                    month: '??????'
+                },
+                'pt': {
+                    day: 'Dia',
+                    week: 'Semana',
+                    month: 'Mês'
+                }
+            },
 
             navDateChanged: function(oldVal, newVal) {
                 var startDate,
@@ -90,8 +133,21 @@ Fired when date changed.
 
             },
 
+            localeChanged: function(oldVal, newVal) {
+                var l = newVal.split("-")[0];
+                if(!this.translation[l]) l = "en";
+
+                this.dayTitle = this.translation[l].day;
+                this.weekTitle = this.translation[l].week;
+                this.monthTitle = this.translation[l].month;
+            },
+
             ready: function() {
-                this.navDate = new Date();
+                if (!this.locale) this.locale = "en-us";
+
+                if (!this.navDate) this.navDate = new Date();
+                else this.navDate = this.clone(this.navDate);
+
                 this.showByDay();
             },
 
@@ -227,7 +283,7 @@ Fired when date changed.
             },
 
             isEqualMonth: function(d1, d2) {
-                return d1 && d2 && (d1.getMonth() === d2.getMonth());
+                return d1 && d2 && (d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear());
             },
 
             checkNavButtons: function() {
