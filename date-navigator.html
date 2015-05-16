@@ -227,7 +227,7 @@ Fired when date changed.
             },
 
             isEqualMonth: function(d1, d2) {
-                return d1 && d2 && (d1.getMonth() === d2.getMonth());
+                return d1 && d2 && (d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear());
             },
 
             checkNavButtons: function() {
