@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>date-navigator Demo</title>
+    <link rel="import" href="date-navigator.html">
+    <link rel="import" href="../core-input/core-input.html">
+
+    <style>
+        body {
+            font-family: RobotoDraft;
+            background: #EEE;
+            width: 100%;
+        }
+
+        #nav {
+            background: white;
+        }
+
+        #input-container div,#startDate,#endDate {
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body unresolved fullbleed layout vertical>
+
+<template id="demo" is="auto-binding">
+    <div id="nav" layout horizontal>
+        <date-navigator id="dateNav" locale="fr-fr" on-date-changed="{{dateChangeAction}}"></date-navigator>
+    </div>
+
+    <div id="input-container" layout vertical center center-justified flex>
+        <div layout horizontal center center-justified flex><input id="startDate" placeholder="start" is="core-input"/></div>
+        <div layout horizontal center center-justified flex><input id="endDate" placeholder="end" is="core-input"/></div>
+    </div>
+</template>
+
+<script>
+    window.addEventListener('WebComponentsReady', function(){
+        console.log("ready");
+        var demo = document.getElementById('demo');
+
+        demo.dateChangeAction = function(ev, detail, sender){
+            document.getElementById('startDate').value = detail.period.start;
+            document.getElementById('endDate').value = detail.period.end;
+        }
+
+    })
+</script>
+
+</body>
+</html>
