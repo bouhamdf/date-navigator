@@ -1,0 +1,30 @@
+{
+  "name": "date-navigator",
+  "version": "1.0.0",
+  "authors": [
+    "Florian Bouhamdani <florian.bouhamdani@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bouhamdf/date-navigator.git"
+  },
+  "description": "A Polymer Web Component Calendar navigator to select a date range by day, week or month",
+  "keywords": [
+    "calendar",
+    "Polymer",
+    "web-components"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "~0.5.6",
+    "core-icon-button": "Polymer/core-icon-button#~0.5.6",
+    "paper-button": "Polymer/paper-button#~0.5.6"
+  }
+}
