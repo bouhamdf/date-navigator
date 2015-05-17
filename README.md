@@ -10,7 +10,7 @@ View the [demo](http://bouhamdf.github.io/date-navigator/components/date-navigat
 bower install --save date-navigator
 ```
 
-## How to us
+## How to use
 ### Include the element in your page
 
 ```
