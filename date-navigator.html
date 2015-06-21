@@ -1,324 +1,350 @@
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-icon-button/core-icon-button.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../font-roboto/roboto.html"/>
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 
 <!--
 Element providing an interactive date range selector by day, week or month.
 
 Example
 
-    <date-navigator locale="en-us"></date-navigator>
+<date-navigator locale="en-us"></date-navigator>
 
 @element date-navigator
 @blurb Element providing an interactive date range selector by day, week or month.
 @homepage https://github.com/bouhamdf/date-navigator
--->
-
-<!--
-Fired when date changed.
 
 @event date-changed
 @param {Date} detail.period.start start date of period selected
 @param {Date} detail.period.end end date of period selected
 -->
 
-<polymer-element name="date-navigator" attributes="locale">
-    <template>
-        <style>
-            :host {
-            }
+<dom-module id="date-navigator">
+  <style>
+   :host {
+   }
 
-            .viewingDate {
-                color: #757575;
-                font-size: 14px;
-                padding: 0;
-                margin: 0 10px;
-                line-height: 42px;
-                text-transform: lowercase;
-            }
-        </style>
+   .elementBar{
+     @apply(--layout-horizontal);
+     @apply(--layout-center-justified);
+     @apply(--layout-wrap);
+   }
 
-        <div layout horizontal center-justified wrap>
-            <div layout horizontal>
-                <core-icon-button id="navDateLeft" icon="chevron-left" on-tap="{{prevAction}}" noink></core-icon-button>
-                <div id="viewingDate"><h4 class="viewingDate">{{viewingDate}}</h4></div>
-                <core-icon-button id="navDateRight"  icon="chevron-right" on-tap="{{nextAction}}" noink></core-icon-button>
-            </div>
 
-            <div>
-                <paper-button id="showByDay" on-click="{{showByDay}}" noink>{{dayTitle}}</paper-button>
-                <paper-button id="showByWeek" on-click="{{showByWeek}}" noink>{{weekTitle}}</paper-button>
-                <paper-button id="showByMonth" on-click="{{showByMonth}}" noink>{{monthTitle}}</paper-button>
-            </div>
-        </div>
 
-    </template>
+   .viewingDate {
+     color: #757575;
+     font-size: 14px;
+     padding: 0;
+     margin: 0 10px;
+     line-height: 42px;
+     text-transform: lowercase;
+   }
+  </style>
 
-    <script>
-        Polymer({
+  <template>
+    <div class="elementBar">
 
-            navDate: null,
+      <paper-icon-button id="navDateLeft" icon="chevron-left" on-tap="prevAction"></paper-icon-button>
+      <div id="viewingDate"><h4 class="viewingDate">{{viewingDate}}</h4></div>
+      <paper-icon-button id="navDateRight"  icon="chevron-right" on-tap="nextAction"></paper-icon-button>
 
-            /**
-             * The `locale` attribute sets the language for localized day and month names. See locales date format in javascript
-             *
-             * @attribute locale
-             * @type string
-             * @default 'en-us'
-             */
-            locale: null,
 
-            dateFormat:"d",
+      <paper-tabs selected="0">
+        <paper-tab id="showByDay" on-click="showByDay">{{dayTitle}}</paper-tab>
+        <paper-tab id="showByWeek" on-click="showByWeek">{{weekTitle}}</paper-tab>
+        <paper-tab id="showByMonth" on-click="showByMonth">{{monthTitle}}</paper-tab>
+        <paper-tab id="showByYear" on-click="showByYear">{{yearTitle}}</paper-tab>
+      </paper-tabs>
 
-            translation: {
-                'en': {
-                    day: 'Day',
-                    week: 'Week',
-                    month: 'Month'
-                },
-                'fr': {
-                    day: 'Jour',
-                    week: 'Semaine',
-                    month: 'Mois'
-                },
-                'es': {
-                    day: 'Día',
-                    week: 'Semana',
-                    month: 'Mes'
-                },
-                'it': {
-                    day: 'Giorno',
-                    week: 'Settimana',
-                    month: 'Mese'
-                },
-                'de': {
-                    day: 'Tag',
-                    week: 'Woche',
-                    month: 'Monat'
-                },
-                'ne': {
-                    day: 'Dag',
-                    week: 'Week',
-                    month: 'Maand'
-                },
-                'pt': {
-                    day: 'Dia',
-                    week: 'Semana',
-                    month: 'Mês'
-                }
-            },
 
-            navDateChanged: function(oldVal, newVal) {
-                var startDate,
-                    endDate;
+    </div>
 
-                if(this.dateFormat == "d") {
-                    startDate = newVal;
-                    endDate = newVal;
-                } else if(this.dateFormat == "w") {
-                    startDate = this.getFirstDayOfWeek(newVal);
-                    endDate = this.getLastDayOfWeek(newVal);
-                } else if(this.dateFormat == "m") {
-                    startDate = this.getFirstDayOfMonth(newVal);
-                    endDate = this.getLastDayOfMonth(newVal);
-                }
+  </template>
 
-                this.fire('date-changed', {period:{start:startDate,end:endDate}});
+  <script>
+   Polymer({
+     is: "date-navigator",
+     properties: {
+       navDate: {
+         type: Object,
+	 notify: false,
+         value: function () {return new Date();},
+         observer: "_navDateChanged",
+       },
+       /**
+        * The `locale` attribute sets the language for localized day and month names. See locales date format in javascript
+        *
+        * @attribute locale
+        * @type string
+        * @default 'en-us'
+        */
+       locale: {
+         type: String,
+         value: "en-us",
+         notify: true,
+         observer: "_localeChanged",
+       },
+       period: {
+         type: Object,
+         value: function () {return {};},
+         notify: true,
+         readOnly: true,
+       },
+     },
 
-            },
 
-            localeChanged: function(oldVal, newVal) {
-                var l = newVal.split("-")[0];
-                if(!this.translation[l]) l = "en";
+     translation: {
+       'en': {
+         day: 'Day',
+         week: 'Week',
+         month: 'Month',
+         year: 'Year',
+       },
+       'de': {
+         day: 'Tag',
+         week: 'Woche',
+         month: 'Monat',
+         year: 'Jahr',
+       },
 
-                this.dayTitle = this.translation[l].day;
-                this.weekTitle = this.translation[l].week;
-                this.monthTitle = this.translation[l].month;
-            },
+     },
 
-            ready: function() {
-                if (!this.locale) this.locale = "en-us";
 
-                if (!this.navDate) this.navDate = new Date();
-                else this.navDate = this.clone(this.navDate);
+     _navDateChanged: function(newVal, oldVal) {
+       var startDate,
+       endDate;
 
-                this.showByDay();
-            },
+       if(this.dateFormat == "d") {
+         startDate = newVal;
+         endDate = newVal;
+       } else if(this.dateFormat == "w") {
+         startDate = this.getFirstDayOfWeek(newVal);
+         endDate = this.getLastDayOfWeek(newVal);
+       } else if(this.dateFormat == "m") {
+         startDate = this.getFirstDayOfMonth(newVal);
+         endDate = this.getLastDayOfMonth(newVal);
+       } else if(this.dateFormat =="y") {
+         startDate = this.getFirstDayOfYear(newVal);
+         endDate = this.getLastDayOfYear(newVal);
+       }
 
-            prevAction: function() {
-                if(this.dateFormat == "d") {
-                    this.navDate = this.addDays(this.navDate,-1);
-                } else if(this.dateFormat == "w") {
-                    this.navDate = this.addDays(this.getFirstDayOfWeek(this.navDate),-7);
-                } else if(this.dateFormat == "m") {
-                    this.navDate = this.addMonths(this.navDate,-1);
-                }
-                this.getDateFormat();
-            },
 
-            nextAction: function() {
-                if(this.dateFormat == "d") {
-                    this.navDate = this.addDays(this.navDate,+1);
-                } else if(this.dateFormat == "w") {
-                    this.navDate = this.addDays(this.getFirstDayOfWeek(this.navDate),+7);
-                } else if(this.dateFormat == "m") {
-                    this.navDate = this.addMonths(this.navDate,+1);
-                }
-                this.getDateFormat();
-            },
+       this._setPeriod({start: startDate, end: endDate});
+       this.fire('date-changed', {period:{start:startDate,end:endDate}});
+     },
 
-            showByDay: function() {
-                this.dateFormat = "d";
-                this.navDate = this.clone(this.navDate);
-                this.getDateFormat();
-                this.deactivateButtons();
-                this.activateButton(this.$.showByDay);
+     _localeChanged: function(newVal, oldVal) {
+       var l = newVal.split("-")[0];
+       if(!this.translation[l]) l = "en";
 
-            },
+       this.dayTitle = this.translation[l].day;
+       this.weekTitle = this.translation[l].week;
+       this.monthTitle = this.translation[l].month;
+       this.yearTitle = this.translation[l].year;
+     },
 
-            showByWeek: function() {
-                this.dateFormat = "w";
-                this.navDate = this.clone(this.navDate);
-                this.getDateFormat();
-                this.deactivateButtons();
-                this.activateButton(this.$.showByWeek);
-            },
+     ready: function() {
+       if (!this.navDate) this.navDate = new Date();
+       else this.navDate = this.clone(this.navDate);
+       this.showByDay();
+       this.getDateFormat();
+     },
 
-            showByMonth: function() {
-                this.dateFormat = "m";
-                this.navDate = this.clone(this.navDate);
-                this.getDateFormat();
-                this.deactivateButtons();
-                this.activateButton(this.$.showByMonth);
-            },
+     prevAction: function() {
+       if(this.dateFormat == "d") {
+         this.navDate = this.addDays(this.navDate,-1);
+       } else if(this.dateFormat == "w") {
+         this.navDate = this.addDays(this.getFirstDayOfWeek(this.navDate),-7);
+       } else if(this.dateFormat == "m") {
+         this.navDate = this.addMonths(this.navDate,-1);
+       } else if(this.dateFormat =="y") {
+         this.navDate = this.addMonths(this.navDate, -12);
+       }
 
-            getFirstDayOfWeek: function(date) {
-                var curr = this.clone(date);
-                var first = curr.getDate() - curr.getDay() + 1;
-                return new Date(curr.setDate(first));
-            },
+       this.getDateFormat();
+     },
 
-            getLastDayOfWeek: function(date) {
-                var curr = this.clone(date);
-                curr = this.getFirstDayOfWeek(curr);
-                var last = curr.getDate() + 6;
-                return new Date(curr.setDate(last));
-            },
+     nextAction: function() {
+       if(this.dateFormat == "d") {
+         this.navDate = this.addDays(this.navDate,+1);
+       } else if(this.dateFormat == "w") {
+         this.navDate = this.addDays(this.getFirstDayOfWeek(this.navDate),+7);
+       } else if(this.dateFormat == "m") {
+         this.navDate = this.addMonths(this.navDate,+1);
+       } else if(this.dateFormat="y") {
+         this.navDate = this.addMonths(this.navDate,+12);
+       }
+       this.getDateFormat();
+     },
 
-            getFirstDayOfMonth: function(date) {
-                return new Date(date.getFullYear(), date.getMonth(), 1);
-            },
+     showByDay: function() {
+       this.dateFormat = "d";
+       this.navDate = this.clone(this.navDate);
+       this.getDateFormat();
 
-            getLastDayOfMonth: function(date) {
-                return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-            },
 
-            getDateFormat: function() {
-                if(this.dateFormat == "d") {
+     },
 
-                    var d = this.getShortDay(this.navDate);
-                    var m =  this.getShortMonth(this.navDate);
-                    this.viewingDate = d + " " + m;
+     showByWeek: function() {
+       this.dateFormat = "w";
+       this.navDate = this.clone(this.navDate);
+       this.getDateFormat();
 
-                } else if(this.dateFormat == "w") {
-                    var curr = this.clone(this.navDate);
+     },
 
-                    var firstday = this.getFirstDayOfWeek(curr);
-                    var lastday = this.getLastDayOfWeek(curr);
+     showByMonth: function() {
+       this.dateFormat = "m";
+       this.navDate = this.clone(this.navDate);
+       this.getDateFormat();
 
-                    var fd = this.getShortDay(firstday);
-                    var fm = this.getShortMonth(firstday);
+     },
 
-                    var ld = this.getShortDay(lastday);
-                    var lm = this.getShortMonth(lastday);
+     showByYear: function () {
+       this.dateFormat = "y";
+       this.navDate = this.clone(this.navDate);
+       this.getDateFormat();
 
-                    var res;
-                    if(fm == lm) res = fd+"-"+ld+" "+fm;
-                    else res =  fd+" "+fm+"-"+ld+" "+lm;
+     },
 
-                    this.viewingDate = res;
+     getFirstDayOfWeek: function(date) {
+       var curr = this.clone(date);
+       var first = curr.getDate() - curr.getDay() + 1;
+       return new Date(curr.setDate(first));
+     },
 
-                } else if(this.dateFormat == "m") {
+     getLastDayOfWeek: function(date) {
+       var curr = this.clone(date);
+       curr = this.getFirstDayOfWeek(curr);
+       var last = curr.getDate() + 6;
+       return new Date(curr.setDate(last));
+     },
 
-                    var m = this.getShortMonth(this.navDate);
-                    var y = this.getLongYear(this.navDate);
+     getFirstDayOfMonth: function(date) {
+       return new Date(date.getFullYear(), date.getMonth(), 1);
+     },
 
-                    this.viewingDate = m + " " + y;
+     getLastDayOfMonth: function(date) {
+       return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+     },
 
-                }
+     getFirstDayOfYear: function(date) {
+       return new Date(date.getFullYear(), 0, 1);
+     },
 
-                this.checkNavButtons();
-            },
+     getLastDayOfYear: function(date) {
+       return new Date(date.getFullYear() + 1, 0, 0);
+     },
 
-            getShortDay: function(date) {
-                return date.toLocaleString(this.locale,{day:"numeric"});
-            },
 
-            getShortMonth: function(date) {
-                return date.toLocaleString(this.locale,{month:"short"});
-            },
+     getDateFormat: function() {
+       if(this.dateFormat == "d") {
 
-            getLongYear: function(date) {
-                return date.toLocaleString(this.locale,{year:"numeric"});
-            },
+         var d = this.getShortDay(this.navDate);
+         var m =  this.getShortMonth(this.navDate);
+         this.viewingDate = d + " " + m;
 
-            isEqualDate: function(d1, d2) {
-                return d1 && d2 &&
-                        (d1.getFullYear() === d2.getFullYear()) &&
-                        (d1.getMonth() === d2.getMonth()) &&
-                        (d1.getDate() === d2.getDate());
-            },
+       } else if(this.dateFormat == "w") {
+         var curr = this.clone(this.navDate);
 
-            isLessEqualDate: function(d1, d2) {
-                return d1 && d2 &&
-                        (d1.getFullYear() <= d2.getFullYear()) &&
-                        (d1.getMonth() <= d2.getMonth()) &&
-                        (d1.getDate() <= d2.getDate());
-            },
+         var firstday = this.getFirstDayOfWeek(curr);
+         var lastday = this.getLastDayOfWeek(curr);
 
-            isEqualMonth: function(d1, d2) {
-                return d1 && d2 && (d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear());
-            },
+         var fd = this.getShortDay(firstday);
+         var fm = this.getShortMonth(firstday);
 
-            checkNavButtons: function() {
-                var now = new Date();
+         var ld = this.getShortDay(lastday);
+         var lm = this.getShortMonth(lastday);
 
-                ((this.dateFormat == "d" && !this.isEqualDate(this.navDate,now))
-                || (this.dateFormat == "w" && !this.isLessEqualDate(now,this.getLastDayOfWeek(this.navDate)))
-                || (this.dateFormat == "m" && !this.isEqualMonth(now,this.navDate))) ? hide = false : hide = true;
+         var res;
+         if(fm == lm) res = fd+"-"+ld+" "+fm;
+         else res =  fd+" "+fm+"-"+ld+" "+lm;
 
-                var el = this.$.navDateRight;
-                (hide) ? el.style.visibility = "hidden" : el.style.visibility = "visible";
-            },
+         this.viewingDate = res;
 
-            activateButton: function(el) {
-                el.style.fontWeight = "500";
-            },
+       } else if(this.dateFormat == "m") {
 
-            deactivateButtons: function() {
-                this.$.showByDay.style.fontWeight = "300";
-                this.$.showByWeek.style.fontWeight = "300";
-                this.$.showByMonth.style.fontWeight = "300";
-            },
+         var m = this.getShortMonth(this.navDate);
+         var y = this.getLongYear(this.navDate);
 
-            clone: function(date) {
-                return new Date(date.getTime());
-            },
+         this.viewingDate = m + " " + y;
 
-            addDays: function(d, days) {
-                var newDate = this.clone(d);
-                newDate.setDate(d.getDate() + days);
-                return newDate;
-            },
+       } else if(this.dateFormat == "y") {
+         var y = this.getLongYear(this.navDate);
+         this.viewingDate = y;
 
-            addMonths: function(d, months) {
-                var newDate = this.clone(d);
-                newDate.setMonth(d.getMonth() + months);
-                return newDate;
-            }
-        });
+       }
 
-    </script>
+       this.checkNavButtons();
+     },
+
+     getShortDay: function(date) {
+       return date.toLocaleString(this.locale,{day:"numeric"});
+     },
+
+     getShortMonth: function(date) {
+       return date.toLocaleString(this.locale,{month:"short"});
+     },
+
+     getLongYear: function(date) {
+       return date.toLocaleString(this.locale,{year:"numeric"});
+     },
+
+     isEqualDate: function(d1, d2) {
+       return d1 && d2 &&
+       (d1.getFullYear() === d2.getFullYear()) &&
+       (d1.getMonth() === d2.getMonth()) &&
+       (d1.getDate() === d2.getDate());
+     },
+
+     isLessEqualDate: function(d1, d2) {
+       return d1 && d2 &&
+       (d1.getFullYear() <= d2.getFullYear()) &&
+       (d1.getMonth() <= d2.getMonth()) &&
+       (d1.getDate() <= d2.getDate());
+     },
+
+     isEqualMonth: function(d1, d2) {
+       return d1 && d2 && (d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear());
+     },
+
+     isEqualYear: function(d1, d2) {
+       return d1 && d2 && (d1.getFullYear() === d2.getFullYear());
+     },
+
+     checkNavButtons: function() {
+       var now = new Date();
+
+       ((this.dateFormat == "d" && !this.isEqualDate(this.navDate,now))
+          || (this.dateFormat == "w" && !this.isLessEqualDate(now,this.getLastDayOfWeek(this.navDate)))
+          || (this.dateFormat == "m" && !this.isEqualMonth(now,this.navDate))
+          || (this.dateFormat == "y" && !this.isEqualYear(now,this.navDate))) ? hide = false : hide = true;
+
+       var el = this.$.navDateRight;
+       (hide) ? el.style.visibility = "hidden" : el.style.visibility = "visible";
+     },
+
+
+     clone: function(date) {
+       return new Date(date.getTime());
+     },
+
+     addDays: function(d, days) {
+       var newDate = this.clone(d);
+       newDate.setDate(d.getDate() + days);
+       return newDate;
+     },
+
+     addMonths: function(d, months) {
+       var newDate = this.clone(d);
+       newDate.setMonth(d.getMonth() + months);
+       return newDate;
+     }
+   });
+
+  </script>
 
 </polymer-element>
