@@ -2,7 +2,8 @@
   "name": "date-navigator",
   "version": "1.2.0",
   "authors": [
-    "Florian Bouhamdani <florian.bouhamdani@gmail.com>"
+    "Florian Bouhamdani <florian.bouhamdani@gmail.com>",
+    "Jan Teichmann <jan.teichmann@gmail.com>"
   ],
   "repository": {
     "type": "git",
@@ -23,9 +24,13 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "~0.5.6",
-    "core-icon-button": "Polymer/core-icon-button#~0.5.6",
-    "paper-button": "Polymer/paper-button#~0.5.6",
-    "core-input": "Polymer/core-input#~0.5.6"
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-input": "PolymerElements/iron-input#^1.0.0",
+    "paper-icon-button": "PolymerElements/paper-icon-button#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.0.0",
+    "paper-styles": "PolymerElements/paper-styles#^1.0.0",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.0.0",
+    "paper-tabs": "PolymerElements/paper-tabs#^1.0.0",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0"
   }
 }
